@@ -78,7 +78,16 @@ body {
 span.username {
     margin-right: 5px;
     font-weight: bold;
+    cursor: pointer;
 }
+span.username:hover {
+    color: #999;
+}
+
+span.friend {
+    color: blue;
+}
+
 #chats {
     height: 500px;
     overflow-y: scroll;

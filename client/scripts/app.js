@@ -2,6 +2,7 @@ $(document).ready(function(){
   $('#chats').on('click', '.username', function(){
     var user = $(this).text();
     app.addFriend(user);
+    $('#chats').find('.username:contains(' + user + ')').addClass('friend');
   });
 
   $('#send').submit(function(event) {
@@ -14,7 +15,7 @@ $(document).ready(function(){
     if (thisRoom === "newroom") {
       var newRoom = window.prompt("Give me the name of your new room");
       thisRoom = sanitizeString(newRoom);
-      if(thisRoom == null || thisRoom == "") { 
+      if(String(thisRoom) == String(null) || String(thisRoom) == "") { 
         $("#roomSelect").val('default');
         thisRoom = 'default';
       } else {
@@ -32,6 +33,7 @@ var app = {};
 
 var curTime = 0;
 var curRoom = "default";
+var friends = {};
 
 app.init = function() {
   app.send = send;
@@ -58,8 +60,9 @@ var allChats = [];
 
 var updateRooms = function(room) {
   for (var key in newRooms) {
-    if (newRooms[key] != undefined)
+    if (String(newRooms[key]) != String(undefined)) {
       $('#roomSelect').append('<option value="' + newRooms[key] + '">' + newRooms[key] + '</option>');    
+    }
   }
 };
 
@@ -74,7 +77,7 @@ var fetch = function() {
       for (var i = messages.length - 1; i >= 0; i--) {
         // console.log(messages[i])
         var room = sanitizeString(messages[i]['roomname']);
-        if(rooms[room] == undefined && room != undefined && room != "" ) {
+        if(String(rooms[room]) == String(undefined) && String(room) != String(undefined) && String(room) != "" ) {
           newRooms[room] = room;
           rooms[room] = room;
         }
@@ -83,7 +86,7 @@ var fetch = function() {
           temp.username = sanitizeString(messages[i]['username']);
           temp.text = sanitizeString(messages[i]['text']);
           allChats.unshift(messages[i]);
-          if(temp.text != undefined && temp.username != undefined) {
+          if(String(temp.text) != String(undefined) && String(temp.username) != String(undefined)) {
             addMessageToUI(temp);
           }
         } else {
@@ -126,7 +129,12 @@ var clearMessages = function() {
 
 // validate our strings against XSS attacks
 var addMessageToUI = function(message) {
-  var $node = '<div><span class="username">' + message.username + '</span><span class="text">' + message.text + '</span></div>';
+  var classes = 'username ';
+  if(friends[message.username] !== undefined) {
+    classes += 'friend';
+  }
+
+  var $node = '<div><span class="' + classes + '">' + message.username + '</span><span class="text">' + message.text + '</span></div>';
   $('#chats').prepend($node);
 }
 
@@ -135,7 +143,7 @@ var addRoom = function(roomname) {
 }
 
 var addFriend = function(friend) {
-  console.log('yay!');
+  friends[friend] = friend;
 }
 
 var getUsername = function() {
