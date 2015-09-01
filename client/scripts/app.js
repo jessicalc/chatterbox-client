@@ -27,7 +27,7 @@ app.init = function() {
   app.handleSubmit = handleSubmit;
   setInterval(function(){
     app.fetch();
-  }, 1000);
+  }, 200);
 }
 
 var fetch = function() {
@@ -42,11 +42,12 @@ var fetch = function() {
         if (Date.parse(messages[i]['createdAt']) - curTime > 0) {
           temp.username = sanitizeString(messages[i]['username']);
           temp.text = sanitizeString(messages[i]['text']);
-          addMessageToUI(temp);          
-        } else {
-          console.log("no new chat messages");
+          if(temp.text !== undefined && temp.username !== undefined) {
+            addMessageToUI(temp);
+          }
         }
       }
+
       curTime = new Date();
     },
     error: function(data) {
@@ -72,10 +73,6 @@ var send = function(message) {
 
 var sanitizeString = function(string) {
   return html_sanitize(string);
-}
-
-var displayPosts = function(data) {
-  console.log(data);
 }
 
 var clearMessages = function() {
@@ -115,8 +112,9 @@ var handleSubmit = function() {
 
   message.text = sanitizeString($('#message').val());
   message.username = getUsername();
-  app.addMessageToUI(message);
+  addMessageToUI(message);
 
+  $('#message').val('');
   app.send(message);
 }
 

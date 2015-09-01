@@ -5,9 +5,13 @@ body {
     font-family: arial, sans-serif;
 }
 
-#main, #chats {
+#main {
+    width: 800px;
+    margin: 0 auto;
+}
+#chats {
     width: 500px;
-    margin: auto;
+    margin: 0 auto;
     text-align: left;
     background: white;
     padding: 50px 60px;
@@ -86,4 +90,8 @@ form input[type=text] {
 span.username {
     margin-right: 5px;
     font-weight: bold;
+}
+#chats {
+    height: 500px;
+    overflow-y: scroll;
 }
