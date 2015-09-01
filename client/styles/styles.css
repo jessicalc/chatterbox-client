@@ -87,6 +87,9 @@ span.username:hover {
 span.friend {
     color: blue;
 }
+span.friend ~ span.text {
+    font-weight: bold;
+}
 
 #chats {
     height: 500px;
