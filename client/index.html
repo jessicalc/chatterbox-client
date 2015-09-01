@@ -17,7 +17,15 @@
     <div id="main">
       <h1>chatterbox</h1>
       <!-- Your HTML goes here! -->
+      <select id="roomSelect"></select>
+      <div id="chats"></div>
+      <form action="" id="send">
+        <input type="text" name="message" id="message"/>
+        <input type="submit" name="submit" class="submit"/>
+      </form>
     </div>
-    <div id="chats"></div>
+    <script type="text/javascript">
+      app.init();
+    </script>
   </body>
 </html>
