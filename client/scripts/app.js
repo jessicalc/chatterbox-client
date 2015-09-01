@@ -12,17 +12,16 @@ $(document).ready(function(){
   $('#roomSelect').on('change', function() {
     var thisRoom = $(this).val();
     if (thisRoom === "newroom") {
-      var prevRoom = $("#roomSelect").val();
-
       var newRoom = window.prompt("Give me the name of your new room");
       thisRoom = sanitizeString(newRoom);
-      if(thisRoom === null || thisRoom == "") { 
-        $("#roomSelect").val(prevRoom);
+      if(thisRoom == null || thisRoom == "") { 
+        $("#roomSelect").val('default');
+        thisRoom = 'default';
+      } else {
+        $('#roomSelect').prepend('<option value="' + thisRoom + '">' + thisRoom + '</option>');
+        $("#roomSelect").val(thisRoom);
       }
-      $('#roomSelect').prepend('<option value="' + thisRoom + '">' + thisRoom + '</option>');
-      $("#roomSelect").val(thisRoom);
     }
-
     app.switchRooms(thisRoom);
   })
 
@@ -75,7 +74,7 @@ var fetch = function() {
       for (var i = messages.length - 1; i >= 0; i--) {
         // console.log(messages[i])
         var room = sanitizeString(messages[i]['roomname']);
-        if(rooms[room] === undefined && room !== undefined && room != "" ) {
+        if(rooms[room] == undefined && room != undefined && room != "" ) {
           newRooms[room] = room;
           rooms[room] = room;
         }
@@ -84,7 +83,7 @@ var fetch = function() {
           temp.username = sanitizeString(messages[i]['username']);
           temp.text = sanitizeString(messages[i]['text']);
           allChats.unshift(messages[i]);
-          if(temp.text !== undefined && temp.username !== undefined) {
+          if(temp.text != undefined && temp.username != undefined) {
             addMessageToUI(temp);
           }
         } else {
@@ -168,9 +167,12 @@ var handleSubmit = function() {
 var switchRooms = function(room) {
   curRoom = room;
   app.clearMessages();
-  for(var i = 0; i < allChats.length; i++) {
+  for(var i = allChats.length - 1; i >= 0; i--) {
     var message = allChats[i];
-    if(curRoom === 'default') addMessageToUI(message);
-    else if(message['roomname'] === curRoom) addMessageToUI(message);
+    if(curRoom === 'default') { 
+      addMessageToUI(message); 
+    } else if(message['roomname'] === curRoom) { 
+      addMessageToUI(message); 
+    }
   }
 }
