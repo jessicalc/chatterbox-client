@@ -23,14 +23,23 @@
         <div class="col-sm-offset-2 col-sm-8">
           <h1>chatterbox</h1>
           <!-- Your HTML goes here! -->
-          <select id="roomSelect"></select>
+          <select class="form-control" id="roomSelect">
+            <option value="default">Lobby</option>
+            <option value="newroom">Create New Room...</option>
+          </select>
           <div class="row">
             <div class="col-sm-12">
               <div id="chats"></div>
-              <form action="" id="send">
-                <input type="text" name="message" id="message"/>
-                <input type="submit" name="submit" class="submit"/>
-              </form>
+              <div class="row">
+                <div class="col-sm-12">
+                  <form action="" id="send">
+                    <div class="form-group">
+                      <input type="text" class="form-control" name="message" id="message"/>
+                      <input type="submit" class="btn btn-primary btn-block" name="submit" class="submit"/>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
         </div>

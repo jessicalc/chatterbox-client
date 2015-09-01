@@ -30,6 +30,19 @@ app.init = function() {
   }, 200);
 }
 
+var rooms = {};
+
+var newRooms = {};
+
+// write a function to pass the roomnames to the selectbox
+
+var updateRooms = function(room) {
+  for (var key in newRooms) {
+    if (newRooms[key] != undefined)
+      $('#roomSelect').append('<option value="' + newRooms[key] + '">' + newRooms[key] + '</option>');    
+  }
+};
+
 var fetch = function() {
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
@@ -39,15 +52,25 @@ var fetch = function() {
       var messages = data.results;
       var temp = {};
       for (var i = messages.length - 1; i >= 0; i--) {
+        // console.log(messages[i])
+        var room = messages[i]['roomname'];
+        if(rooms[room] === undefined && room !== undefined && room != "" ) {
+          newRooms[room] = room;
+          rooms[room] = room;
+        }
+
         if (Date.parse(messages[i]['createdAt']) - curTime > 0) {
           temp.username = sanitizeString(messages[i]['username']);
           temp.text = sanitizeString(messages[i]['text']);
           if(temp.text !== undefined && temp.username !== undefined) {
             addMessageToUI(temp);
           }
+        } else {
+          break;
         }
       }
-
+      updateRooms(room);
+      newRooms = {};
       curTime = new Date();
     },
     error: function(data) {
@@ -85,8 +108,8 @@ var addMessageToUI = function(message) {
   $('#chats').prepend($node);
 }
 
-var addRoom = function(roomName) {
-  $('#roomSelect').append('<option value ="' + sanitizeString(roomName) + '"></option>');
+var addRoom = function(roomname) {
+  $('#roomSelect').append('<option value ="' + sanitizeString(roomname) + '"></option>');
 }
 
 var addFriend = function(friend) {
