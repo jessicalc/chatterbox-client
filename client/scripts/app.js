@@ -14,6 +14,8 @@ $(document).ready(function(){
 // YOUR CODE HERE:
 var app = {};
 
+var curTime = 0;
+
 app.init = function() {
   app.send = send;
   app.fetch = fetch;
@@ -23,6 +25,9 @@ app.init = function() {
   app.addRoom = addRoom;
   app.addFriend = addFriend;
   app.handleSubmit = handleSubmit;
+  setInterval(function(){
+    app.fetch();
+  }, 1000);
 }
 
 var fetch = function() {
@@ -32,13 +37,17 @@ var fetch = function() {
     contentType: 'application/json',
     success: function(data) {
       var messages = data.results;
-      console.log(messages);
       var temp = {};
-      for (var i = 0; i < messages.length; i++) {
-        temp.username = sanitizeString(messages[i]['username']);
-        temp.text = sanitizeString(messages[i]['text']);
-        addMessageToUI(temp);
+      for (var i = messages.length - 1; i >= 0; i--) {
+        if (Date.parse(messages[i]['createdAt']) - curTime > 0) {
+          temp.username = sanitizeString(messages[i]['username']);
+          temp.text = sanitizeString(messages[i]['text']);
+          addMessageToUI(temp);          
+        } else {
+          console.log("no new chat messages");
+        }
       }
+      curTime = new Date();
     },
     error: function(data) {
       console.log(data);
@@ -76,7 +85,7 @@ var clearMessages = function() {
 // validate our strings against XSS attacks
 var addMessageToUI = function(message) {
   var $node = '<div><span class="username">' + message.username + '</span><span class="text">' + message.text + '</span></div>';
-  $('#chats').append($node);
+  $('#chats').prepend($node);
 }
 
 var addRoom = function(roomName) {
@@ -111,4 +120,3 @@ var handleSubmit = function() {
   app.send(message);
 }
 
-setInterval(app.fetch, 1000);

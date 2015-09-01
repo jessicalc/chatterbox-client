@@ -84,5 +84,6 @@ form input[type=text] {
 }
 
 span.username {
-    margin-right: 10px;
+    margin-right: 5px;
+    font-weight: bold;
 }
