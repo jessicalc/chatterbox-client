@@ -10,14 +10,29 @@ $(document).ready(function(){
   });  
 
   $('#roomSelect').on('change', function() {
-    app.switchRooms($(this).val());
+    var thisRoom = $(this).val();
+    if (thisRoom === "newroom") {
+      var prevRoom = $("#roomSelect").val();
+
+      var newRoom = window.prompt("Give me the name of your new room");
+      thisRoom = sanitizeString(newRoom);
+      if(thisRoom === null || thisRoom == "") { 
+        $("#roomSelect").val(prevRoom);
+      }
+      $('#roomSelect').prepend('<option value="' + thisRoom + '">' + thisRoom + '</option>');
+      $("#roomSelect").val(thisRoom);
+    }
+
+    app.switchRooms(thisRoom);
   })
+
 });
 
 // YOUR CODE HERE:
 var app = {};
 
 var curTime = 0;
+var curRoom = "default";
 
 app.init = function() {
   app.send = send;
@@ -59,7 +74,7 @@ var fetch = function() {
       var temp = {};
       for (var i = messages.length - 1; i >= 0; i--) {
         // console.log(messages[i])
-        var room = messages[i]['roomname'];
+        var room = sanitizeString(messages[i]['roomname']);
         if(rooms[room] === undefined && room !== undefined && room != "" ) {
           newRooms[room] = room;
           rooms[room] = room;
@@ -143,6 +158,7 @@ var handleSubmit = function() {
 
   message.text = sanitizeString($('#message').val());
   message.username = getUsername();
+  message.roomname = curRoom;
   addMessageToUI(message);
 
   $('#message').val('');
@@ -150,10 +166,11 @@ var handleSubmit = function() {
 }
 
 var switchRooms = function(room) {
+  curRoom = room;
   app.clearMessages();
-
   for(var i = 0; i < allChats.length; i++) {
     var message = allChats[i];
-    if(message['roomname'] === room) addMessageToUI(message);
+    if(curRoom === 'default') addMessageToUI(message);
+    else if(message['roomname'] === curRoom) addMessageToUI(message);
   }
 }
