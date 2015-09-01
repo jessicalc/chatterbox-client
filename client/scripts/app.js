@@ -25,7 +25,6 @@ $(document).ready(function(){
     }
     app.switchRooms(thisRoom);
   })
-
 });
 
 // YOUR CODE HERE:
@@ -81,9 +80,13 @@ var fetch = function() {
           newRooms[room] = room;
           rooms[room] = room;
         }
-
         if (Date.parse(messages[i]['createdAt']) - curTime > 0) {
           temp.username = sanitizeString(messages[i]['username']);
+
+          if(temp.username == getUsername()) {
+            continue;
+          }
+
           temp.text = sanitizeString(messages[i]['text']);
           allChats.unshift(messages[i]);
           if(String(temp.text) != String(undefined) && String(temp.username) != String(undefined)) {
@@ -103,7 +106,7 @@ var fetch = function() {
   });
 }
 
-var send = function(message) {
+var send = function(message, personalMessage) {
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
     type: 'POST',
@@ -113,7 +116,7 @@ var send = function(message) {
       console.log('message sent');
     },
     error: function(data) {
-      console.log('message failed');  
+      console.log('message failed');
     }
   });
 }
@@ -129,6 +132,8 @@ var clearMessages = function() {
 
 // validate our strings against XSS attacks
 var addMessageToUI = function(message) {
+  if(message.roomname != curRoom && curRoom !== 'default') return;
+
   var classes = 'username ';
   if(friends[message.username] !== undefined) {
     classes += 'friend';
@@ -166,10 +171,11 @@ var handleSubmit = function() {
   message.text = sanitizeString($('#message').val());
   message.username = getUsername();
   message.roomname = curRoom;
-  addMessageToUI(message);
+  allChats.unshift(message);
 
   $('#message').val('');
-  app.send(message);
+  app.send(message, true);
+  addMessageToUI(message);
 }
 
 var switchRooms = function(room) {
