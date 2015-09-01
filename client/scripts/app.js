@@ -7,8 +7,11 @@ $(document).ready(function(){
   $('#send').submit(function(event) {
     app.handleSubmit();
     event.preventDefault();
-  })  
+  });  
 
+  $('#roomSelect').on('change', function() {
+    app.switchRooms($(this).val());
+  })
 });
 
 // YOUR CODE HERE:
@@ -25,6 +28,7 @@ app.init = function() {
   app.addRoom = addRoom;
   app.addFriend = addFriend;
   app.handleSubmit = handleSubmit;
+  app.switchRooms = switchRooms;
   setInterval(function(){
     app.fetch();
   }, 200);
@@ -33,6 +37,8 @@ app.init = function() {
 var rooms = {};
 
 var newRooms = {};
+
+var allChats = [];
 
 // write a function to pass the roomnames to the selectbox
 
@@ -62,6 +68,7 @@ var fetch = function() {
         if (Date.parse(messages[i]['createdAt']) - curTime > 0) {
           temp.username = sanitizeString(messages[i]['username']);
           temp.text = sanitizeString(messages[i]['text']);
+          allChats.unshift(messages[i]);
           if(temp.text !== undefined && temp.username !== undefined) {
             addMessageToUI(temp);
           }
@@ -93,6 +100,7 @@ var send = function(message) {
     }
   });
 }
+
 
 var sanitizeString = function(string) {
   return html_sanitize(string);
@@ -141,3 +149,11 @@ var handleSubmit = function() {
   app.send(message);
 }
 
+var switchRooms = function(room) {
+  app.clearMessages();
+
+  for(var i = 0; i < allChats.length; i++) {
+    var message = allChats[i];
+    if(message['roomname'] === room) addMessageToUI(message);
+  }
+}
